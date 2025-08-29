@@ -1,103 +1,72 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Link from "next/link";
 import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    
+    <main className="min-h-screen bg-white">
+      <Navbar />
+      <section className="mx-auto max-w-4xl px-6 py-16">
+        <div className="flex justify-center mb-4">
+  <Image
+    src="/logo-kbs.png"
+    alt="Kisa Beauty School"
+    width={100}
+    height={100}
+    className="rounded-full bg-white p-1"
+    priority
+  />
+</div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-pink-500 mb-8 text-center">
+          Bienvenue à Kisa Beauty School
+        </h1>
+
+        <p className="text-lg text-pink-500 mb-6">
+          Bienvenue à Kisa Beauty School (KBS), une école de formation professionnelle située à
+          Ouanaminthe, Haïti. Depuis plus de 5 ans, nous formons avec passion et rigueur une
+          nouvelle génération de jeunes talents dans les domaines de la beauté, de la création
+          artistique et du soin esthétique.
+        </p>
+
+        <p className="text-lg text-pink-500 mb-6">
+          Notre établissement propose des formations complètes et certifiantes dans plusieurs
+          spécialités :
+        </p>
+
+        <ul className="list-disc list-inside text-lg text-pink-500 mb-6 space-y-2">
+          <li>Maquillage professionnel</li>
+          <li>Cosmétologie moderne</li>
+          <li>Décoration événementielle</li>
+        </ul>
+
+        <p className="text-lg text-pink-500 mb-6">
+          Chez KBS, nous croyons que chaque étudiant(e) mérite un cadre propice à l’apprentissage, à la
+          créativité et à la réussite. Notre équipe pédagogique expérimentée vous accompagne à chaque
+          étape de votre parcours pour faire de votre passion un métier d’avenir.
+        </p>
+
+        <p className="text-xl font-semibold text-pink-600 italic mb-6 text-center">
+          💬 “Kisa un jour, Kisa toujours” — notre slogan symbolise l’engagement et la fierté
+          d’appartenir à une communauté dynamique et inspirante.
+        </p>
+
+        <p className="text-lg text-pink-500 text-center">
+          Rejoignez-nous aujourd’hui et transformez vos rêves en carrière professionnelle.
+        </p>
+        <div className="mt-6">
+  <Link
+    href="/inscription"
+    className="inline-block bg-pink-500 text-white px-6 py-3 rounded-xl shadow hover:bg-pink-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-pink-500 transition"
+  >
+    S’inscrire maintenant
+  </Link>
+</div>
+
+      </section>
+      <Footer />
+
+    </main>
   );
 }

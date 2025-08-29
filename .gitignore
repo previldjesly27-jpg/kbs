@@ -42,3 +42,6 @@ next-env.d.ts
 .next
 node_modules
 .env*
+.next
+node_modules
+.env*

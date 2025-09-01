@@ -1,22 +1,44 @@
-'use client';
-
-import { useSearchParams } from 'next/navigation';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import PrintButton from '@/components/PrintButton';
 
-export default function SuccessPage() {
-  const sp = useSearchParams();
-  const nom = sp.get('nom') || '';
-  const email = sp.get('email') || '';
-  const programme = sp.get('programme') || '';
-  const telephone =
-    sp.get('telephone') || sp.get('tel') || sp.get('phone') || sp.get('numero') || sp.get('num') || '';
+export const metadata: Metadata = {
+  title: 'Inscription réussie',
+  robots: { index: false, follow: false },
+};
 
-  const safe = (s?: string) => (s && s.trim().length ? s : '—');
+// Helpers
+const val = (sp: Record<string, string | string[] | undefined>, k: string) => {
+  const v = sp[k];
+  return Array.isArray(v) ? v[0] : v || '';
+};
+const pickPhone = (sp: Record<string, string | string[] | undefined>) => {
+  for (const k of ['telephone', 'tel', 'phone', 'numero', 'num']) {
+    const v = sp[k];
+    if (Array.isArray(v)) return v[0] as string;
+    if (typeof v === 'string' && v.trim()) return v;
+  }
+  return '';
+};
+const safe = (s?: string) => (s && s.trim().length ? s : '—');
+
+// ✅ Server Component (pas de "use client")
+export default async function SuccessPage({ searchParams }: any) {
+  // Next 15 peut passer un objet OU une Promise → on résout toujours
+  const sp: Record<string, string | string[] | undefined> =
+    (await Promise.resolve(searchParams)) ?? {};
+
+  const nom = val(sp, 'nom');
+  const email = val(sp, 'email');
+  const programme = val(sp, 'programme');
+  const telephone = pickPhone(sp);
 
   return (
     <>
       <Navbar />
+
+      {/* Fond rose & blanc */}
       <div className="min-h-[70vh] bg-gradient-to-b from-pink-50 to-white flex items-center justify-center px-4 py-12">
         <main className="w-full max-w-2xl">
           <section className="bg-white rounded-2xl shadow-xl ring-1 ring-pink-100/60 p-8 md:p-10 text-center">
@@ -30,7 +52,8 @@ export default function SuccessPage() {
               Inscription envoyée avec succès
             </h1>
             <p className="mt-4 md:mt-5 text-lg md:text-xl leading-relaxed text-slate-800">
-              Merci pour votre inscription. <span className="font-semibold text-pink-700">Nous vous contacterons dès que possible.</span>
+              Merci pour votre inscription.{' '}
+              <span className="font-semibold text-pink-700">Nous vous contacterons dès que possible.</span>
             </p>
 
             <div className="mt-6 md:mt-7 space-y-1.5 text-base md:text-lg text-slate-800 text-left sm:text-center">
@@ -47,13 +70,13 @@ export default function SuccessPage() {
             </div>
 
             <div className="mt-6">
-              <button onClick={() => window.print()} className="text-sm md:text-base underline text-slate-600 hover:text-slate-800">
-                Imprimer le reçu
-              </button>
+              {/* Bouton client (ok à importer dans une Server Component) */}
+              <PrintButton />
             </div>
           </section>
         </main>
       </div>
+
       <Footer />
     </>
   );

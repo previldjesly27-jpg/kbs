@@ -4,11 +4,14 @@ import { FormEvent, useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from 'next/navigation';
+
 
 export default function InscriptionPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [sent, setSent] = useState(false); // ✅ message de succès
+const router = useRouter();
 
   // Masquer automatiquement le bandeau après 5s (optionnel)
   useEffect(() => {
@@ -66,11 +69,18 @@ async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     specialites,   // ← tableau
   });
 
-  if (error) {
-    setErr(error.message);
-    setLoading(false);
-    return;
-  }
+// ✅ Insert OK → on redirige vers /inscription/success AVEC les valeurs
+const qs = new URLSearchParams({
+  nom,
+  telephone,
+  email,
+  // on affiche les programmes sur la page succès via le paramètre "programme"
+  programme: specialites.join(', '),
+}).toString();
+
+router.push(`/inscription/success?${qs}`);
+return; // (optionnel) on stoppe ici pour éviter de continuer à faire des setState inutiles
+
 
   form.reset();
   setLoading(false);

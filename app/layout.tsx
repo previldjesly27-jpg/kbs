@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SchemaOrg from "@/components/SchemaOrg";
 
-const siteUrl = "https://kisabeautyschool.education";
+const siteUrl = "https://www.kisabeautyschool.education";
 const siteName = "Kisa Beauty School";
 const siteDesc =
   "Kisa Beauty School (KBS) — école professionnelle à Ouanaminthe, Haïti. Formations certifiantes en Maquillage, Cosmétologie et Décoration événementielle.";

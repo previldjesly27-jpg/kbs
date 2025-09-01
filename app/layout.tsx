@@ -1,7 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-import SchemaOrg from '@/components/SchemaOrg';
+import SchemaOrg from "@/components/SchemaOrg";
 
 const siteUrl = "https://kisabeautyschool.education";
 const siteName = "Kisa Beauty School";
@@ -10,10 +10,7 @@ const siteDesc =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: siteName,
-    template: "%s | Kisa Beauty School",
-  },
+  title: { default: siteName, template: "%s | Kisa Beauty School" },
   description: siteDesc,
   keywords: [
     "Kisa Beauty School",
@@ -24,18 +21,17 @@ export const metadata: Metadata = {
     "Ouanaminthe",
     "Formation professionnelle",
   ],
-  alternates: {
-    canonical: siteUrl,
-  },
- 
+  alternates: { canonical: "/" }, // (optionnel) tu peux laisser siteUrl si tu préfères
+  themeColor: "#f3129b",
   icons: {
     icon: [
-      { url: '/favicon.ico' },                                              // .ico (fallback universel)
-      { url: '/icon.png', type: 'image/png', sizes: '512x512' },            // généré depuis app/icon.png
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: "/favicon.ico" },
+            { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' }, // 👈 ajout
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
     ],
-    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
     type: "website",
@@ -43,14 +39,7 @@ export const metadata: Metadata = {
     siteName,
     title: siteName,
     description: siteDesc,
-    images: [
-      {
-        url: "/logo-og.png", // 1200x630 recommandé
-        width: 1200,
-        height: 630,
-        alt: "Kisa Beauty School",
-      },
-    ],
+    images: [{ url: "/logo-og.png", width: 1200, height: 630, alt: "Kisa Beauty School" }],
     locale: "fr_HT",
   },
   twitter: {
@@ -59,46 +48,16 @@ export const metadata: Metadata = {
     description: siteDesc,
     images: ["/logo-og.png"],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  // Si tu veux aussi valider la Search Console par meta (optionnel) :
-  // Remplace le token ci-dessous, ou supprime la ligne si inutile
-  verification: {
-    google: "", // ← colle ici ton token si tu veux (sinon, laisse vide ou supprime)
-  },
+  robots: { index: true, follow: true },
   applicationName: siteName,
-  themeColor: "#f3129b", // rose de ta charte
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: siteName,
-    url: siteUrl,
-    logo: `${siteUrl}/logo.png`,
-    sameAs: [
-      // Ajoute tes réseaux si tu veux
-    ],
-  };
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
       <body>
-        {/* JSON-LD (SEO) */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
         {children}
-  <SchemaOrg />
-
+        <SchemaOrg />
       </body>
     </html>
   );

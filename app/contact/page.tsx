@@ -1,9 +1,14 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SocialLinks from '@/components/SocialLinks';
+
 export default function ContactPage() {
+  
   return (
+    
     <main className="min-h-screen bg-white">
       <Navbar />
+      
       <section className="mx-auto max-w-4xl px-6 py-16 space-y-8">
         <h1 className="text-4xl font-bold text-pink-500">Contactez-nous</h1>
 
@@ -35,9 +40,11 @@ export default function ContactPage() {
     Envoyer
   </button>
 </form>
-
+<SocialLinks />
       </section>
       <Footer />
+      
+
     </main>
   );
 }

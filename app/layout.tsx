@@ -1,7 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
-
 const siteUrl = "https://kisabeautyschool.education";
 const siteName = "Kisa Beauty School";
 const siteDesc =
@@ -90,6 +89,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+
       </body>
     </html>
   );

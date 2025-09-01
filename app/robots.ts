@@ -1,12 +1,12 @@
-// app/robots.ts
-import type { MetadataRoute } from "next";
-
-const baseUrl = "https://kisabeautyschool.education";
+import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const base = 'https://www.kisabeautyschool.education';
   return {
-    rules: [{ userAgent: "*", allow: "/" }],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    rules: [
+      { userAgent: '*', allow: '/', disallow: ['/admin', '/inscription/success'] },
+    ],
+    sitemap: `${base}/sitemap.xml`,
+    host: base,
   };
 }

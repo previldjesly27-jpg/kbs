@@ -19,6 +19,29 @@ const router = useRouter();
     const t = setTimeout(() => setSent(false), 5000);
     return () => clearTimeout(t);
   }, [sent]);
+function toIsoFromFr(fr: string): string | null {
+  // fr: "JJ/MM/AAAA" -> "YYYY-MM-DD"
+  const m = fr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  const [_, JJ, MM, YYYY] = m;
+  const dd = parseInt(JJ, 10), mm = parseInt(MM, 10), yyyy = parseInt(YYYY, 10);
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || yyyy < 1900) return null;
+  const d = new Date(yyyy, mm - 1, dd);
+  // vérifie la validité réelle (ex: 31/02 invalide)
+  if (d.getFullYear() !== yyyy || d.getMonth() !== mm - 1 || d.getDate() !== dd) return null;
+  const iso = `${yyyy.toString().padStart(4, '0')}-${MM}-${JJ}`;
+  return iso;
+}
+
+function ageFromIso(iso: string): number {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return -1;
+  const today = new Date();
+  let age = today.getFullYear() - d.getFullYear();
+  const m = today.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+  return age;
+}
 
 async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
@@ -31,8 +54,41 @@ async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
   const nom = String(fd.get("nom") || "").trim();
   const email = String(fd.get("email") || "").trim();
   const telephone = String(fd.get("telephone") || "").trim();
-  const date_naissance_raw = String(fd.get("date_naissance") || "").trim();
-  const date_naissance = date_naissance_raw || null;
+// ⬇️ Date FR -> ISO + validation âge
+const date_naissance_fr = String(fd.get("date_naissance") || "").trim();
+
+const toIsoFromFr = (fr: string): string | null => {
+  const m = fr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  const [, JJ, MM, YYYY] = m;
+  const dd = Number(JJ), mm = Number(MM), yyyy = Number(YYYY);
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || yyyy < 1900) return null;
+  const d = new Date(yyyy, mm - 1, dd);
+  if (d.getFullYear() !== yyyy || d.getMonth() !== mm - 1 || d.getDate() !== dd) return null;
+  return `${YYYY}-${MM}-${JJ}`; // ISO YYYY-MM-DD
+};
+
+const ageFromIso = (iso: string): number => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return -1;
+  const today = new Date();
+  let age = today.getFullYear() - d.getFullYear();
+  const m = today.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+  return age;
+};
+
+const date_naissance_iso = toIsoFromFr(date_naissance_fr);
+if (!date_naissance_iso) {
+  setErr("Date invalide (format JJ/MM/AAAA).");
+  setLoading(false);
+  return;
+}
+if (ageFromIso(date_naissance_iso) < 15) {
+  setErr("Âge minimum requis : 15 ans.");
+  setLoading(false);
+  return;
+}
 
   const responsable_nom = String(fd.get("responsable_nom") || "").trim() || null;
   const responsable_tel = String(fd.get("responsable_tel") || "").trim() || null;
@@ -47,7 +103,7 @@ async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
   );
 
   // Validations
-  if (!nom || !email || !telephone || !date_naissance || !responsable_nom || !responsable_tel) {
+  if (!nom || !email || !telephone || !date_naissance_fr || !responsable_nom || !responsable_tel) {
     setErr("Tous les champs sont obligatoires.");
     setLoading(false);
     return;
@@ -63,11 +119,15 @@ async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     nom,
     email,
     telephone,
-    date_naissance,
+   date_naissance: date_naissance_iso,
     responsable_nom,
     responsable_tel,
     specialites,   // ← tableau
   });
+const orFilter = [
+  `email.eq.${email}`,
+  `and(nom.eq.${encodeURIComponent(nom)},date_naissance.eq.${date_naissance_iso})`,
+].join(',');
 
 // ✅ Insert OK → on redirige vers /inscription/success AVEC les valeurs
 const qs = new URLSearchParams({
@@ -125,13 +185,28 @@ return; // (optionnel) on stoppe ici pour éviter de continuer à faire des setS
 
   {/* Date de naissance */}
   <div>
-    <label className="block text-white mb-1">Date de naissance *</label>
-    <input
-      name="date_naissance"
-      type="date"
-      required
+<label htmlFor="date_naissance" className="block text-white mb-1">
+  Date de naissance *
+</label>
+<input
+  id="date_naissance"
+  name="date_naissance"
+  type="text"
+  inputMode="numeric"
+  autoComplete="bday"
+  placeholder="JJ/MM/AAAA"
+  pattern="^\d{2}/\d{2}/\d{4}$"
+  maxLength={10}
       className="w-full border border-pink-300 rounded-lg px-3 py-2 bg-pink-400 text-white placeholder-white"
-    />
+  onInput={(e) => {
+    const el = e.currentTarget;
+    const d = el.value.replace(/\D+/g, '').slice(0, 8); // garde max 8 chiffres
+    let out = d;
+    if (d.length > 4) out = d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4);
+    else if (d.length > 2) out = d.slice(0, 2) + '/' + d.slice(2);
+    el.value = out;
+  }}
+/>
   </div>
 
   {/* Email + Téléphone */}

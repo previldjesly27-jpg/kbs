@@ -29,6 +29,8 @@ export default function Footer() {
             <li><Link className="hover:opacity-90 underline" href="/contact">Contact</Link></li>
             <li><Link className="hover:opacity-90 underline" href="/inscription">Inscription</Link></li>
             <li><Link className="hover:opacity-90 underline" href="/galerie">Galerie</Link></li>
+            <li><Link className="hover:opacity-90 underline" href="/publication">Magazine</Link></li>
+
           </ul>
         </div>
       </div>

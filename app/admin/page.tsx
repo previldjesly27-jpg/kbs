@@ -247,6 +247,16 @@ useEffect(() => {
 
         {/* Raccourcis */}
         <div className="mt-8 grid sm:grid-cols-3 gap-6">
+          <Link
+  href="/admin/publications"
+  className="block border rounded-2xl p-4 hover:shadow-md transition"
+>
+  <div className="text-xl font-semibold text-pink-500">Publications</div>
+  <p className="text-sm text-gray-600">
+    Créer, modifier et publier des articles de l’école.
+  </p>
+</Link>
+
           <Link href="/admin/inscriptions" className="block rounded-xl border p-6 hover:shadow">
             <h2 className="text-xl font-semibold text-pink-500">Inscriptions</h2>
             <p className="text-gray-600">Voir et gérer les inscriptions.</p>

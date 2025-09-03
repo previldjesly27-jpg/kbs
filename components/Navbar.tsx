@@ -7,7 +7,7 @@ import Image from "next/image";
 const links = [
   { href: "/inscription", label: "Inscription" },
     { href: "/contact", label: "Contact" },
-
+    { href: "/publication", label: "Publication" },
   { href: "/galerie", label: "Galerie" },
   { href: "/temoignages", label: "Témoignages" },
   { href: "/admin", label: "Admin" }, // décommente si tu veux l’afficher

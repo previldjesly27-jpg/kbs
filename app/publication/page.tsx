@@ -6,10 +6,15 @@ import Navbar from "@/components/Navbar";
 
 export const dynamic = "force-dynamic";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// ✅ crée le client au runtime (évite les plantages de build si ENV manquantes)
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase env manquantes (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY).");
+  }
+  return createClient(url, key);
+}
 
 function formatDateFR(d: string) {
   return new Date(d).toLocaleDateString("fr-FR", {
@@ -23,24 +28,36 @@ function excerpt(txt: string, n = 140) {
 }
 
 export default async function PublicationPage() {
+  const supabase = getSupabase();
   const { data: posts, error } = await supabase
     .from("publication")
     .select("id, slug, title, cover_url, created_at, content")
     .eq("status", "published")
     .order("created_at", { ascending: false });
 
-  if (error) return <main className="p-6 text-red-600">Erreur chargement publications.</main>;
+  if (error) {
+    return (
+      <main className="min-h-screen bg-pink-50">
+        <Navbar />
+        <div className="max-w-6xl mx-auto p-6 text-red-600">
+          Erreur chargement publications.
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-pink-50">
-        <Navbar />
+      <Navbar />
       <div className="max-w-6xl mx-auto p-6">
         <header className="mb-6">
-<h1 className="text-3xl sm:text-4xl font-bold text-pink-500 text-center mb-1">
-          Magazine
-        </h1>         
-        <p className="text-xl font-semibold text-pink-600 italic mb-6 text-center">
-Bienvenue dans notre magazine en ligne. Reportages, avant/après, tendances, astuces pro et moments forts de la vie de l’école… Suis nos réalisations et les réussites de nos Kisa Girls & Boys — “Kisa un jour, Kisa toujours”.          </p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-pink-500 text-center mb-1">
+            Magazine
+          </h1>
+          <p className="text-xl font-semibold text-pink-600 italic mb-6 text-center">
+            Bienvenue dans notre magazine en ligne. Reportages, avant/après, tendances, astuces pro et moments forts de la vie de l’école… Suis nos réalisations et les réussites de nos Kisa Girls & Boys — “Kisa un jour, Kisa toujours”.
+          </p>
         </header>
 
         {!posts?.length && (
@@ -78,10 +95,7 @@ Bienvenue dans notre magazine en ligne. Reportages, avant/après, tendances, ast
           ))}
         </section>
       </div>
-
-
-       <Footer />
+      <Footer />
     </main>
-    
   );
 }

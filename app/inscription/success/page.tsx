@@ -1,12 +1,15 @@
+
 import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PrintButton from '@/components/PrintButton';
 
 export const metadata: Metadata = {
+  
   title: 'Inscription réussie',
   robots: { index: false, follow: false },
 };
+export const dynamic = 'force-dynamic';
 
 // Helpers
 const val = (sp: Record<string, string | string[] | undefined>, k: string) => {
@@ -32,6 +35,25 @@ export default async function SuccessPage({ searchParams }: any) {
   const nom = val(sp, 'nom');
   const email = val(sp, 'email');
   const programme = val(sp, 'programme');
+// Normalise l'horaire
+const prettyProgramme =
+  programme?.toLowerCase() === 'weekend' ? 'Weekend' : 'Semaine';
+
+// Récupère la 1ʳᵉ spécialité envoyée via ?specialites=...
+const specialitesRaw = val(sp, 'specialites'); // ex: "maquillage, cosmetologie"
+const firstSpecialite = specialitesRaw
+  ? specialitesRaw.split(',')[0]?.trim()
+  : '';
+
+// Mise en forme "Maquillage / Weekend"
+const prettySpecialite = firstSpecialite
+  ? firstSpecialite.charAt(0).toUpperCase() + firstSpecialite.slice(1)
+  : '';
+
+const programmeLine = prettySpecialite
+  ? `${prettySpecialite} / ${prettyProgramme}`
+  : prettyProgramme;
+
   const telephone = pickPhone(sp);
 
   return (
@@ -60,8 +82,10 @@ export default async function SuccessPage({ searchParams }: any) {
               <p><span className="text-slate-500">Nom :</span> <span className="font-medium text-pink-700">{safe(nom)}</span></p>
               <p><span className="text-slate-500">Téléphone :</span> <span className="font-medium">{safe(telephone)}</span></p>
               <p><span className="text-slate-500">Email :</span> <span className="font-medium">{safe(email)}</span></p>
-              <p><span className="text-slate-500">Programme :</span> <span className="font-medium">{safe(programme)}</span></p>
-            </div>
+<p><span className="text-slate-500">Programme :</span> <span className="font-medium">{programmeLine}</span></p>
+
+
+            </div> 
 
             <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 justify-center">
               <a href="/" className="px-5 py-2.5 rounded-xl bg-white text-pink-700 ring-1 ring-pink-200 hover:ring-pink-300 hover:shadow-sm transition">Retour à l’accueil</a>

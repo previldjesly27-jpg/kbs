@@ -303,8 +303,7 @@ export default function AdminInscriptionsPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <section className="mx-auto max-w-7xl px-6 py-10 text-pink-700">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+<section className="w-full px-3 sm:px-6 py-4 text-pink-700">        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">Inscriptions</h1>
 
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
@@ -376,22 +375,10 @@ export default function AdminInscriptionsPage() {
           </div>
         )}
 
-        <div className="overflow-x-auto rounded-xl border">
-          <table className="min-w-full table-fixed text-sm">
-            <colgroup>
-              <col className="w-[9rem]" />
-              <col className="w-[12rem]" />
-              <col className="w-[18rem]" />
-              <col className="w-[10rem]" />
-              <col className="w-[9rem]" />
-              <col className="w-[12rem]" />
-              <col className="w-[10rem]" />
-              <col className="w-[16rem]" />
-              <col className="w-[12rem]" />
-            </colgroup>
+<div className="h-[calc(100vh-220px)] overflow-auto rounded-xl border">
+<table className="w-full table-auto text-sm text-pink-700">             
 
-            <thead className="bg-pink-50 text-pink-600">
-              <tr className="text-left">
+<thead className="bg-pink-50 text-pink-600 sticky top-0 z-10">              <tr className="text-left">
                 <th className="px-4 py-2">Date</th>
                 <th className="px-4 py-2">Nom</th>
                 <th className="px-4 py-2">Email</th>

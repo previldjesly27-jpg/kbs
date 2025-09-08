@@ -141,6 +141,12 @@ export default function InscriptionPage() {
         setLoading(false);
         return;
       }
+void fetch("/api/inscriptions/email", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ nom, email, telephone, programme, specialites }),
+  keepalive: true,
+});
 
       // Redirection vers la page succès avec les infos utiles
       const qs = new URLSearchParams({

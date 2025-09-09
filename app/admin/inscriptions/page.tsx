@@ -90,6 +90,7 @@ export default function AdminInscriptionsPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const router = useRouter();
+const goToDetail = (id: string) => router.push(`/admin/inscriptions/${id}`);
 
   // 🔎 recherche & filtre (gardés de la version précédente)
   const [q, setQ] = useState("");
@@ -378,7 +379,8 @@ export default function AdminInscriptionsPage() {
 <div className="h-[calc(100vh-220px)] overflow-auto rounded-xl border">
 <table className="w-full table-auto text-sm text-pink-700">             
 
-<thead className="bg-pink-50 text-pink-600 sticky top-0 z-10">              <tr className="text-left">
+<thead className="bg-pink-50 text-pink-600 sticky top-0 z-10">            
+    <tr className="text-left">
                 <th className="px-4 py-2">Date</th>
                 <th className="px-4 py-2">Nom</th>
                 <th className="px-4 py-2">Email</th>
@@ -392,47 +394,47 @@ export default function AdminInscriptionsPage() {
             </thead>
 
             <tbody className="divide-y">
-              {loading ? (
-                <tr>
-                  <td className="px-4 py-4 text-pink-500" colSpan={9}>
-                    Chargement…
-                  </td>
-                </tr>
-              ) : view.length === 0 ? (
-                <tr>
-                  <td className="px-4 py-6 text-pink-500" colSpan={9}>
-                    Aucune inscription.
-                  </td>
-                </tr>
-              ) : (
-                view.map((r) => (
-                  <tr key={r.id} className="align-top">
-                    <td className="px-4 py-2 whitespace-nowrap">{fmtFrDateTime(r.created_at)}</td>
-                    <td className="px-4 py-2 truncate">{r.nom}</td>
-                    <td className="px-4 py-2 truncate">{r.email ?? "—"}</td>
-                    <td className="px-4 py-2 whitespace-nowrap">{r.telephone || "—"}</td>
-                    <td className="px-4 py-2 whitespace-nowrap">{fmtDateFrFromIso(r.date_naissance) || "—"}</td>
-                    <td className="px-4 py-2 truncate">{r.responsable_nom ?? "—"}</td>
-                    <td className="px-4 py-2 whitespace-nowrap">{r.responsable_tel || "—"}</td>
-                    <td className="px-4 py-2">{formatProgramme(r) || "—"}</td>
-                    <td className="px-4 py-2 space-x-2">
-                      <button
-                        onClick={() => openEdit(r)}
-                        className="border border-pink-300 text-pink-600 px-3 py-1.5 rounded-lg hover:bg-pink-50"
-                      >
-                        Éditer
-                      </button>
-                      <button
-                        onClick={() => void handleDelete(r.id)}
-                        className="bg-pink-500 text-white px-3 py-1.5 rounded-lg hover:bg-pink-600"
-                      >
-                        Supprimer
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
+  {view.map((r) => (
+    <tr
+      key={r.id}
+      className="align-top cursor-pointer hover:bg-pink-50"
+      onClick={() => goToDetail(r.id)}
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && goToDetail(r.id)}
+    >
+      <td className="px-4 py-2 whitespace-nowrap">{fmtFrDateTime(r.created_at)}</td>
+      <td className="px-4 py-2 truncate">{r.nom}</td>
+      <td className="px-4 py-2 truncate">{r.email ?? "—"}</td>
+      <td className="px-4 py-2 whitespace-nowrap">{r.telephone || "—"}</td>
+      <td className="px-4 py-2 whitespace-nowrap">{fmtDateFrFromIso(r.date_naissance) || "—"}</td>
+      <td className="px-4 py-2 truncate">{r.responsable_nom ?? "—"}</td>
+      <td className="px-4 py-2 whitespace-nowrap">{r.responsable_tel || "—"}</td>
+      <td className="px-4 py-2">{formatProgramme(r) || "—"}</td>
+      <td className="px-4 py-2 space-x-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            openEdit(r);
+          }}
+          className="border border-pink-300 text-pink-600 px-3 py-1.5 rounded-lg hover:bg-pink-50"
+        >
+          Éditer
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            void handleDelete(r.id);
+          }}
+          className="bg-pink-500 text-white px-3 py-1.5 rounded-lg hover:bg-pink-600"
+        >
+          Supprimer
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+
           </table>
         </div>
       </section>

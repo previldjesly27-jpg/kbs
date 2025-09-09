@@ -269,6 +269,14 @@ useEffect(() => {
             <h2 className="text-xl font-semibold text-pink-500">Galerie</h2>
             <p className="text-gray-600">Uploader et gérer les images.</p>
           </Link>
+          <Link
+  href="/admin/etudiants"
+  className="block rounded-xl border p-6 hover:shadow"
+>
+  <h3 className="text-xl font-semibold text-pink-500">Étudiants</h3>
+  <p className="text-gray-600">Ajouter, confirmer et gérer les étudiantes.</p>
+</Link>
+
         </div>
 
         {/* Actions */}

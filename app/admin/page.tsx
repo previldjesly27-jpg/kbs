@@ -8,6 +8,9 @@ import { supabase } from "@/lib/supabaseClient";
 
 const CATS = ["maquillage", "cosmetologie", "decoration", "autres"] as const;
 type Cat = typeof CATS[number];
+// 1 = semaine, 2 = weekend
+const toDbGroupe = (p?: string | null) =>
+  (String(p || '').toLowerCase() === 'weekend' ? 2 : 1);
 
 type KPIs = {
   totalInsc: number | null;

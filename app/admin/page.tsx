@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
+import AdminStats from "@/components/AdminStats";
 
 const CATS = ["maquillage", "cosmetologie", "decoration", "autres"] as const;
 type Cat = typeof CATS[number];
-// 1 = semaine, 2 = weekend
-const toDbGroupe = (p?: string | null) =>
-  (String(p || '').toLowerCase() === 'weekend' ? 2 : 1);
 
 type KPIs = {
   totalInsc: number | null;
@@ -206,7 +204,7 @@ useEffect(() => {
             Déconnexion
           </button>
         </div>
-
+<AdminStats />
         {err && <p className="mb-4 text-red-600">{err}</p>}
 
         {/* Cartes KPI */}
@@ -297,6 +295,7 @@ useEffect(() => {
             Exporter les inscriptions (CSV)
           </button>
         </div>
+      
       </section>
     </main>
   );

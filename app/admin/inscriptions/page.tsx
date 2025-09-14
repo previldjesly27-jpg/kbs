@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-type Statut = "nouveau" | "confirme" | "paye" | "termine";
+type Statut = "nouveau" | "archive";
 
 type AdminInscription = {
   id: string;
@@ -23,17 +23,12 @@ type AdminInscription = {
 
 const STYLES: Record<Statut, string> = {
   nouveau: "bg-pink-50 text-pink-700 border border-pink-200",
-  confirme: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-  paye: "bg-green-50 text-green-700 border border-green-200",
-  termine: "bg-slate-100 text-slate-700 border border-slate-200",
+  archive: 'bg-yellow-50 text-yellow-700 border border-yellow-200', // ✅ jaune
 };
 
 function StatutPill({ v }: { v?: string | null }) {
-  const s = (v as Statut) || "nouveau";
-  const label =
-    s === "nouveau" ? "Nouveau" :
-    s === "confirme" ? "Confirmé" :
-    s === "paye" ? "Payé" : "Terminé";
+  const s: Statut = v === "archive" ? "archive" : "nouveau";
+  const label = s === "archive" ? "Archivé" : "Nouveau";
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${STYLES[s]}`}>
       {label}
@@ -75,61 +70,6 @@ function formatProgramme(r: AdminInscription) {
 function csvEscape(v: unknown, sep = ";") {
   const s = String(v ?? "");
   return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-}
-function exportCsvEtudiants(data: any[]) {
-  // Petits helpers locaux
-  const csvEscape = (v: unknown, sep = ";") => {
-    const s = String(v ?? "");
-    return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  const fmtDateTimeFR = (iso?: string | null) =>
-    iso ? new Date(iso).toLocaleString("fr-FR") : "";
-  const labelProg = (p?: string | null) => {
-    const v = (p || "").toLowerCase();
-    if (v === "maquillage") return "Maquillage";
-    if (v === "cosmetologie") return "Cosmétologie";
-    if (v === "decoration") return "Décoration";
-    if (v === "style-crochet") return "Style crochet";
-    return v ? v.charAt(0).toUpperCase() + v.slice(1) : "";
-  };
-  const programmeLabel = (r: any) =>
-    labelProg(r.programme || (r.specialites?.[0] ?? ""));
-  const groupeLabel = (g?: string | number | null) => {
-    if (typeof g === "number") return g === 2 ? "Weekend" : "Semaine";
-    const v = (g || "").toLowerCase();
-    return v.includes("week") ? "Weekend" : v ? "Semaine" : "";
-  };
-  const statutLabel = (s?: string | null) => {
-    const v = (s || "actif").toLowerCase();
-    if (v === "archive") return "Archivé";
-    return "Actif";
-  };
-
-  const header = ["Date", "Nom", "Email", "Téléphone", "Programme", "Groupe", "Statut"];
-  const lines = data.map((r) => [
-    fmtDateTimeFR(r.created_at),
-    r.nom ?? "",
-    r.email ?? "",
-    r.telephone ?? "",
-    programmeLabel(r),
-    groupeLabel(r.groupe),
-    statutLabel(r.statut),
-  ]);
-
-  const sep = ";";
-  const csv = [header, ...lines]
-    .map((row) => row.map((v) => csvEscape(v, sep)).join(sep))
-    .join("\n");
-
-  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `etudiants_kbs_${new Date().toISOString().slice(0, 10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
 }
 
 // ----------------------------------------
@@ -435,13 +375,6 @@ async function confirmToEtudiant(inscriptionId: string) {
                       >
                         Modifier
                       </button>
-                      <button
-  onClick={() => exportCsvEtudiants(view /* ou rows si tu n'as pas de filtre */)}
-  disabled={loading || (view?.length ?? 0) === 0}
-  className="border border-pink-300 text-pink-600 px-3 py-1.5 rounded-lg hover:bg-pink-50 disabled:opacity-60"
->
-  Exporter CSV
-</button>
 
                       <button
                         onClick={(e) => { e.stopPropagation(); void handleDelete(r.id); }}

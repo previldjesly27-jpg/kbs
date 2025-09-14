@@ -13,7 +13,7 @@ export default function ContactPage() {
         <h1 className="text-4xl font-bold text-pink-500">Contactez-nous</h1>
 
         <div className="space-y-3 text-pink-500">
-          <p><strong>Email :</strong> kisabeauty@gmail.com</p>
+          <p><strong>Email :</strong> walkisep@gmail.com</p>
           <p><strong>Téléphone :</strong> +509 4116-3845 / +509 3823-5518</p>
           <p><strong>Adresse :</strong> Rue des Marthys, Ouanaminthe, Haïti HT2210</p>
         </div>

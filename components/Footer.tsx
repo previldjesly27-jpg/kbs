@@ -15,7 +15,7 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold">Contacts</h4>
           <ul className="mt-2 space-y-1 text-white/90">
-            <li>Email : <a className="underline hover:opacity-90" href="mailto:kisabeauty@gmail.com">kisabeauty@gmail.com</a></li>
+            <li>Email : <a className="underline hover:opacity-90" href="mailto:walkisep@gmail.com">walkisep@gmail.com</a></li>
             <li>Tél : +509 4116-3845 / +509 3823-5518</li>
             <li>Adresse : Kafou baz normal, Rue des Marthys, Ouanaminthe, Haïti HT2210</li>
           </ul>

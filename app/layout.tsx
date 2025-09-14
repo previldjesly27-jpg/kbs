@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SchemaOrg from "@/components/SchemaOrg";
-
+import WhatsAppButton from "@/components/WhatsAppButton";
 const siteUrl = "https://www.kisabeautyschool.education";
 const siteName = "Kisa Beauty School";
 const siteDesc =
@@ -21,12 +21,12 @@ export const metadata: Metadata = {
     "Ouanaminthe",
     "Formation professionnelle",
   ],
-  alternates: { canonical: "/" }, // (optionnel) tu peux laisser siteUrl si tu préfères
+  alternates: { canonical: "/" },
   themeColor: "#f3129b",
   icons: {
     icon: [
       { url: "/favicon.ico" },
-            { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' }, // 👈 ajout
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
       { url: "/icon.png", type: "image/png", sizes: "512x512" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -57,6 +57,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr">
       <body>
         {children}
+        <WhatsAppButton
+  phone="+50941163845"
+  message="Bonjour KBS, je viens de m’inscrire."
+/>
         <SchemaOrg />
       </body>
     </html>

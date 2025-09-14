@@ -2,6 +2,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
+import HomeTriptych from "@/components/HomeTriptych";
+
 export default function HomePage() {
   return (
     
@@ -9,11 +11,12 @@ export default function HomePage() {
       <Navbar />
       <section className="mx-auto max-w-4xl px-6 py-16">
         <div className="flex justify-center mb-4">
+
   <Image
     src="/logo-kbs.png"
     alt="Kisa Beauty School"
-    width={100}
-    height={100}
+    width={200}
+    height={200}
     className="rounded-full bg-white p-1"
     priority
   />
@@ -63,10 +66,11 @@ export default function HomePage() {
     S’inscrire maintenant
   </Link>
 </div>
+{/* 3 carrés : Maquillage / Cosmétologie / Décoration – rotation toutes les 15s */}
+      <HomeTriptych />
 
       </section>
       <Footer />
-
     </main>
   );
 }

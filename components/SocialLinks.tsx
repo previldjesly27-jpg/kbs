@@ -1,8 +1,8 @@
 export default function SocialLinks() {
   const links = [
-    { label: 'Facebook',  user: 'Kisabeauty',   href: 'https://www.facebook.com/Kisabeauty' },
+    { label: 'Facebook',  user: 'Kisabeauty',   href: 'https://www.facebook.com/profile.php?id=100069757953290' },
     { label: 'TikTok',    user: '@Kisabeauty05',  href: 'https://www.tiktok.com/@Kisabeauty05' },
-    { label: 'Instagram', user: '@Kisabeauty05',href: 'https://www.instagram.com/Kisabeauty05' },
+    { label: 'Instagram', user: '@Kisabeauty05',href: 'https://www.instagram.com/kisa_beauty05/' },
   ];
 
   return (

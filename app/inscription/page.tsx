@@ -277,9 +277,7 @@ export default function InscriptionPage() {
               {[
                 { value: 'maquillage', label: 'Maquillage' },
                 { value: 'cosmetologie', label: 'Cosmétologie' },
-                { value: 'decoration', label: 'Décoration' },
-                { value: 'style-crochet', label: 'Style crochet' },
-              ].map((opt) => (
+                { value: 'decoration', label: 'Décoration' },              ].map((opt) => (
                 <label
                   key={opt.value}
                   className="flex items-center gap-3 bg-pink-400/60 hover:bg-pink-400 rounded-lg px-3 py-2 border border-pink-300 text-white cursor-pointer"

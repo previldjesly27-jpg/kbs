@@ -174,15 +174,17 @@ export default function AdminInscriptionDetailPage() {
 
   // Confirmation → création Étudiant, puis ARCHIVE l’inscription
   async function confirmToStudent() {
-    if (!insc) return;
-    setSaving(true);
-    setErr(null);
+  if (!insc) return;
+  setSaving(true);
+  setErr(null);
 
-    // On part des valeurs du formulaire (les plus fraîches)
-    const programmeTxt = form.programme; // 'semaine' | 'weekend'
-    const filiere = form.specialites[0] || null;
+  try {
+    // valeurs depuis le formulaire
+    const groupeTxt: 'semaine' | 'weekend' = form.programme;
+    const groupeInt = groupeTxt === 'weekend' ? 2 : 1;
+    const filiere = form.specialites[0] || null; // spécialité principale (maquillage/cosmetologie/decoration)
 
-    // tentative d’insertion (groupe texte)
+    // 1) Créer l'étudiant (essai groupe en TEXTE)
     let created: { id: string } | null = null;
     let e2: any = null;
 
@@ -195,15 +197,15 @@ export default function AdminInscriptionDetailPage() {
         date_naissance: form.date_naissance || null,
         responsable_nom: form.responsable_nom.trim() || null,
         responsable_tel: form.responsable_tel.trim() || null,
-        programme: programmeTxt,                 // texte côté étudiants si tu le gardes
-        specialites: filiere ? [filiere] : null, // on garde la 1ʳᵉ spécialité
-        groupe: programmeTxt,                    // ← essai en texte
+        programme: filiere,                         // ✅ programme = spécialité
+        specialites: filiere ? [filiere] : null,
+        groupe: groupeTxt,                          // groupe = semaine/weekend (texte)
         statut: 'actif',
       })
       .select('id')
       .single());
 
-    // fallback si la colonne groupe est INTEGER (1/2)
+    // 2) Fallback si la colonne groupe est INTEGER (1/2)
     if (e2) {
       ({ data: created, error: e2 } = await supabase
         .from('etudiants')
@@ -214,9 +216,9 @@ export default function AdminInscriptionDetailPage() {
           date_naissance: form.date_naissance || null,
           responsable_nom: form.responsable_nom.trim() || null,
           responsable_tel: form.responsable_tel.trim() || null,
-          programme: programmeTxt,
+          programme: filiere,
           specialites: filiere ? [filiere] : null,
-          groupe: groupeToDb(programmeTxt),      // 1 semaine / 2 weekend
+          groupe: groupeInt,                        // 1 = semaine, 2 = weekend
           statut: 'actif',
         })
         .select('id')
@@ -224,17 +226,27 @@ export default function AdminInscriptionDetailPage() {
     }
 
     if (e2 || !created) {
-      setSaving(false);
-      setErr(e2?.message || "Création étudiant impossible");
+      setErr(e2?.message || 'Création étudiant impossible');
       return;
     }
 
-    // Marque l’inscription ARCHIVÉE (au lieu de 'confirme')
-    await supabase.from('inscriptions').update({ statut: 'archive' }).eq('id', id);
+    // 3) SUPPRIMER l'inscription (au lieu d’archiver)
+    const { error: delErr } = await supabase
+      .from('inscriptions')
+      .delete()
+      .eq('id', insc.id);
 
-    setSaving(false);
+    if (delErr) {
+      alert("Étudiant créé, mais suppression de l'inscription impossible : " + delErr.message);
+    }
+
+    // 4) Aller sur la fiche étudiant
     router.push(`/admin/etudiants/${created.id}`);
+  } finally {
+    setSaving(false);
   }
+}
+
 
   if (loading) {
     return (
@@ -353,7 +365,7 @@ export default function AdminInscriptionDetailPage() {
             disabled={confirming}
             className="border border-pink-300 text-pink-600 px-3 py-2 rounded-lg hover:bg-pink-50 disabled:opacity-60"
           >
-            {confirming ? 'Veuillez patienter…' : 'Confirmer → Étudiant (archiver)'}
+            {confirming ? 'Veuillez patienter…' : 'Confirmer → Étudiant '}
           </button>
 
           <Link href="/admin/inscriptions" className="px-4 py-2 rounded-lg border border-pink-200 hover:bg-pink-50">

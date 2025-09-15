@@ -14,6 +14,7 @@ type Etu = {
   nom: string | null;
   email: string | null;
   telephone: string | null;
+  date_naissance: string | null;
   programme: string | null;        // "maquillage" | "cosmetologie" | "decoration" | null
   specialites: string[] | null;    // on regarde specialites[0] si programme est vide
   groupe: string | number | null;  // "semaine" | "weekend" | 1 | 2 | null
@@ -44,6 +45,31 @@ const groupeLabel = (g?: string | number | null) => {
   const v = (g || "").toLowerCase();
   return v.includes("week") ? "Weekend" : v ? "Semaine" : "—";
 };
+function monthFromIso(iso?: string | null): number | null {
+  if (!iso) return null;
+  const s = iso.includes('T') ? iso.slice(0, 10) : iso; // YYYY-MM-DD
+  const [, m] = s.split('-');
+  const n = Number(m);
+  return Number.isFinite(n) && n >= 1 && n <= 12 ? n : null;
+}
+
+const MONTHS = [
+  '', 'Janvier','Février','Mars','Avril','Mai','Juin',
+  'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
+];
+function fmtBirth(d?: string | null) {
+  if (!d) return "—";
+  const t = d.trim();
+  // ISO 2024-09-14 (ou avec T…)
+  if (t.includes("-")) {
+    const s = t.includes("T") ? t.slice(0, 10) : t;
+    const [y, m, dd] = s.split("-");
+    return dd && m && y ? `${dd}/${m}/${y}` : t;
+  }
+  // Probablement déjà au format FR (14/09/2024)
+  return t;
+}
+
 function exportCsvEtudiants(data: any[]) {
   // Petits helpers locaux
   const csvEscape = (v: unknown, sep = ";") => {
@@ -73,12 +99,13 @@ function exportCsvEtudiants(data: any[]) {
     return "Actif";
   };
 
-  const header = ["Date", "Nom", "Email", "Téléphone", "Programme", "Groupe", "Statut"];
+  const header = ["Date", "Nom", "Email", "Téléphone", "Programme", "Groupe","Naissance", "Statut"];
   const lines = data.map((r) => [
     fmtDateTimeFR(r.created_at),
     r.nom ?? "",
     r.email ?? "",
     r.telephone ?? "",
+    fmtBirth(r.date_naissance),
     programmeLabel(r),
     groupeLabel(r.groupe),
     statutLabel(r.statut),
@@ -109,6 +136,7 @@ export default function AdminEtudiantsPage() {
   const [rows, setRows] = useState<Etu[]>([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+const [birthMonth, setBirthMonth] = useState<'all' | number>('all');
 
   // filtres basiques
   const [q, setQ] = useState("");
@@ -124,9 +152,11 @@ export default function AdminEtudiantsPage() {
     setErr(null);
 
     const { data, error } = await supabase
-      .from("etudiants")
-      .select("id, created_at, nom, email, telephone, programme, specialites, groupe, statut")
-      .order("created_at", { ascending: false });
+  .from("etudiants")
+  .select(
+    "id, created_at, nom, email, telephone, date_naissance, programme, groupe, statut"
+  )
+  .order("created_at", { ascending: false });
 
     if (error) {
       setErr(error.message);
@@ -151,32 +181,40 @@ export default function AdminEtudiantsPage() {
   }
 
   const view = useMemo(() => {
-    const needle = strip(q);
-    return rows.filter((r) => {
-      // filtre groupe
-      if (grp) {
-        const g = groupeLabel(r.groupe).toLowerCase();
-        if (g !== grp) return false;
-      }
-      // filtre statut (optionnel, adapte selon ta BDD)
-      if (statut && (r.statut || "actif").toLowerCase() !== statut) return false;
+  const needle = strip(q);
+  return rows.filter((r) => {
+    // filtre groupe
+    if (grp) {
+      const g = groupeLabel(r.groupe).toLowerCase();
+      if (g !== grp) return false;
+    }
 
-      if (!needle) return true;
-      const hay = [
-        r.nom || "",
-        r.email || "",
-        r.telephone || "",
-        programmeLabel(r),
-        groupeLabel(r.groupe),
-      ]
-        .join(" ")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+    // filtre statut
+    if (statut && (r.statut || "actif").toLowerCase() !== statut) return false;
 
-      return hay.includes(needle);
-    });
-  }, [rows, q, grp, statut]);
+    // ✅ filtre mois de naissance (birthMonth = 'all' | 1..12)
+    if (birthMonth !== 'all') {
+      const m = monthFromIso(r.date_naissance); // YYYY-MM-DD -> 1..12
+      if (m !== birthMonth) return false;
+    }
+
+    if (!needle) return true;
+    const hay = [
+      r.nom || "",
+      r.email || "",
+      r.telephone || "",
+      programmeLabel(r),
+      groupeLabel(r.groupe),
+    ]
+      .join(" ")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    return hay.includes(needle);
+  });
+}, [rows, q, grp, statut, birthMonth]); // 👈 ajoute birthMonth ici
+
 
   return (
     <main className="min-h-screen bg-white">
@@ -211,6 +249,19 @@ export default function AdminEtudiantsPage() {
               <option value="actif">Actif</option>
               <option value="archive">Archivé</option>
             </select>
+           <select
+  value={birthMonth}
+  onChange={(e) =>
+    setBirthMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))
+  }
+  className="border border-pink-300 text-pink-700 px-3 py-1.5 rounded-lg"
+  title="Filtrer par mois de naissance"
+>
+  <option value="all">Tous mois</option>
+  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+    <option key={m} value={m}>{MONTHS[m]}</option>
+  ))}
+</select>
 
             <Link
               href="/admin"
@@ -258,6 +309,7 @@ export default function AdminEtudiantsPage() {
                 <th className="px-4 py-2">Téléphone</th>
                 <th className="px-4 py-2">Programme</th>
                 <th className="px-4 py-2">Groupe</th>
+                <th className="px-4 py-2">Naissance</th>
                 <th className="px-4 py-2">Statut</th>
                 <th className="px-4 py-2">Actions</th>
               </tr>
@@ -302,6 +354,8 @@ export default function AdminEtudiantsPage() {
 
                     {/* ✅ Groupe fonctionne avec texte OU entier */}
                     <td className="px-4 py-2">{groupeLabel(r.groupe)}</td>
+                    <td className="px-4 py-2 whitespace-nowrap">{fmtBirth(r.date_naissance)}</td>
+
 
                     <td className="px-4 py-2">{(r.statut || "Actif").charAt(0).toUpperCase() + (r.statut || "Actif").slice(1)}</td>
 

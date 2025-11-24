@@ -515,6 +515,13 @@ async function onChangeAvatar(e: React.ChangeEvent<HTMLInputElement>) {
           >
             Retour à la liste
           </Link>
+          <Link
+  href="/admin/paiement-etudiant"
+  className="px-3 py-1 text-xs rounded-lg bg-pink-50 text-pink-700 border border-pink-200 hover:bg-pink-100"
+>
+  💳 Voir paiements
+</Link>
+
         </div>
 
         {/* =================== Galerie =================== */}

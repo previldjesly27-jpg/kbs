@@ -270,13 +270,18 @@ useEffect(() => {
             <h2 className="text-xl font-semibold text-pink-500">Galerie</h2>
             <p className="text-gray-600">Uploader et gérer les images.</p>
           </Link>
-          <Link
-  href="/admin/etudiants"
-  className="block rounded-xl border p-6 hover:shadow"
->
-  <h3 className="text-xl font-semibold text-pink-500">Étudiants</h3>
-  <p className="text-gray-600">Ajouter, confirmer et gérer les étudiantes.</p>
-</Link>
+           <Link href="/admin/paiements"className="block rounded-2xl border border-pink-100 bg-white p-4 hover:shadow-md transition">
+            <h2 className="text-lg font-semibold text-pink-500">Paiements</h2>
+            <p className="text-sm text-gray-600">Confirmer les paiements mensuels des étudiantes. </p>
+          </Link>
+          <Link href="/admin/etudiants"className="block rounded-xl border p-6 hover:shadow">
+            <h3 className="text-xl font-semibold text-pink-500">Étudiants</h3>
+            <p className="text-gray-600">Ajouter, confirmer et gérer les étudiantes.</p>
+           </Link>
+           <Link href="/admin/archives-etudiants"className="block rounded-2xl border border-pink-100 bg-white p-4 hover:shadow-md transition">
+            <h2 className="text-lg font-semibold text-pink-500">Archives étudiantes</h2>
+            <p className="text-sm text-gray-600">Consulter les anciennes étudiantes.</p>
+           </Link>
 
         </div>
 

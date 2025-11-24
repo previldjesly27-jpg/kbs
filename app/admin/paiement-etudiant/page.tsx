@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
@@ -187,7 +187,7 @@ function CategoryBlock({
     focusedEtudiantId,
   ]);
 
-  // 🔽 Export CSV pour cette catégorie (avec période + filtre + étudiante ciblée)
+  // 🔽 Export CSV pour cette catégorie
   function handleExportCsv() {
     if (!rows.length) {
       alert("Aucune donnée à exporter pour cette catégorie.");
@@ -341,13 +341,13 @@ function CategoryBlock({
   );
 }
 
-export default function AdminPaiementEtudiantPage() {
+// 🔹 Composant interne qui utilise useSearchParams
+function AdminPaiementEtudiantInner() {
   const [etudiants, setEtudiants] = useState<Etudiant[]>([]);
   const [paiements, setPaiements] = useState<Paiement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 🔎 Filtre global: Tous / Payés / Non payés
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
   const searchParams = useSearchParams();
@@ -495,5 +495,20 @@ export default function AdminPaiementEtudiantPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// 🔹 Composant exporté : wrapper avec Suspense
+export default function AdminPaiementEtudiantPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-sm text-gray-600">
+          Chargement des paiements…
+        </div>
+      }
+    >
+      <AdminPaiementEtudiantInner />
+    </Suspense>
   );
 }

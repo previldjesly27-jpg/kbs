@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { ajouterInscription } from "./actions";
 
 // Helpers
 function toIsoFromFr(fr: string): string | null {
@@ -140,8 +141,15 @@ export default function InscriptionPage() {
         }
         setLoading(false);
         return;
-      }
+     }
 
+      // 🔔 NOUVEAU : envoyer l'email admin via la server action
+      try {
+        await ajouterInscription(fd);
+      } catch (err) {
+        console.error("Erreur envoi email admin :", err);
+        // on n'affiche pas d'erreur à l'utilisateur, l'inscription est déjà enregistrée
+      }
       // Redirection vers la page succès avec les infos utiles
       const qs = new URLSearchParams({
         nom,
@@ -153,6 +161,7 @@ export default function InscriptionPage() {
 
       router.push(`/inscription/success?${qs}`);
       return;
+      
     } catch (e: any) {
       setErr(e?.message || 'Erreur inattendue.');
       setLoading(false);
